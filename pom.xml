@@ -10,6 +10,7 @@
     <artifactId>stash-archive</artifactId>
     <packaging>atlassian-plugin</packaging>
     <name>Stash Archive Plugin</name>
+    <version>0.1-SNAPSHOT</version>
     <description>Provides archiving of Git repositories hosted by Stash</description>
     <build>
         <plugins>
