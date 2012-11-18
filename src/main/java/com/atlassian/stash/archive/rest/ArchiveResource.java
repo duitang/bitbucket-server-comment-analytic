@@ -4,7 +4,11 @@ import com.atlassian.plugins.rest.common.interceptor.InterceptorChain;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.stash.archive.ArchiveFormat;
 import com.atlassian.stash.archive.ArchiveService;
+import com.atlassian.stash.exception.ArgumentValidationException;
+import com.atlassian.stash.exception.NoSuchEntityException;
+import com.atlassian.stash.i18n.I18nService;
 import com.atlassian.stash.repository.Repository;
+import com.atlassian.stash.repository.RepositoryMetadataService;
 import com.atlassian.stash.rest.interceptor.ResourceContextInterceptor;
 import com.atlassian.stash.rest.util.ResourcePatterns;
 import com.atlassian.stash.rest.util.ResponseFactory;
@@ -27,9 +31,14 @@ import java.io.OutputStream;
 public class ArchiveResource {
 
     private final ArchiveService archiveService;
+    private final RepositoryMetadataService repositoryMetadataService;
+    private final I18nService i18nService;
 
-    public ArchiveResource(ArchiveService archiveService) {
+    public ArchiveResource(ArchiveService archiveService, RepositoryMetadataService repositoryMetadataService,
+                           I18nService i18nService) {
         this.archiveService = archiveService;
+        this.repositoryMetadataService = repositoryMetadataService;
+        this.i18nService = i18nService;
     }
 
     @GET
@@ -38,9 +47,21 @@ public class ArchiveResource {
                            final @QueryParam("ref") @DefaultValue("HEAD") String ref,
                            @QueryParam("filename") String filename) {
         final ArchiveFormat format = ArchiveFormat.forExtension(extension);
-
         if (format == null) {
-            return ResponseFactory.status(Response.Status.BAD_REQUEST).entity("Invalid format: " + extension).build();
+            throw new ArgumentValidationException(i18nService.getKeyedText("stash.archive.unsupported.format",
+                    "Unsupported format: ''{0}''", extension));
+        }
+
+        if (filename == null) {
+            filename = repository.getSlug() + "." + format.getExtension();
+        }
+
+        // The service will throw a NoSuchEntityException if the ref doesn't exist but using StreamingOutput means the
+        // response will be committed by that point, so our ExceptionMappers won't kick in unless we validate the ref
+        // exists up front.
+        if (repositoryMetadataService.resolveRef(repository, ref) == null) {
+            throw new NoSuchEntityException(i18nService.getKeyedText("stash.archive.object.not.found",
+                    "{0} does not exist in repository ''{1}''", ref, repository.getName()));
         }
 
         StreamingOutput stream = new StreamingOutput() {
@@ -49,9 +70,7 @@ public class ArchiveResource {
                 archiveService.stream(repository, format, ref, outputStream);
             }
         };
-        if (filename == null) {
-            filename = repository.getSlug() + "." + format.getExtension();
-        }
+
         return ResponseFactory
                 .ok(stream)
                 .header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
