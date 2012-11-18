@@ -12,6 +12,8 @@ import com.atlassian.stash.repository.RepositoryMetadataService;
 import com.atlassian.stash.rest.interceptor.ResourceContextInterceptor;
 import com.atlassian.stash.rest.util.ResourcePatterns;
 import com.atlassian.stash.rest.util.ResponseFactory;
+import com.atlassian.stash.throttle.ThrottleService;
+import com.atlassian.stash.throttle.Ticket;
 import com.sun.jersey.spi.resource.Singleton;
 
 import javax.ws.rs.*;
@@ -33,18 +35,20 @@ public class ArchiveResource {
     private final ArchiveService archiveService;
     private final RepositoryMetadataService repositoryMetadataService;
     private final I18nService i18nService;
+    private final ThrottleService throttleService;
 
     public ArchiveResource(ArchiveService archiveService, RepositoryMetadataService repositoryMetadataService,
-                           I18nService i18nService) {
+                           I18nService i18nService, ThrottleService throttleService) {
         this.archiveService = archiveService;
         this.repositoryMetadataService = repositoryMetadataService;
         this.i18nService = i18nService;
+        this.throttleService = throttleService;
     }
 
     @GET
     public Response stream(final @Context Repository repository,
                            final @QueryParam("format") @DefaultValue("zip") String extension,
-                           final @QueryParam("ref") @DefaultValue("HEAD") String ref,
+                           @QueryParam("ref") String ref,
                            @QueryParam("filename") String filename) {
         final ArchiveFormat format = ArchiveFormat.forExtension(extension);
         if (format == null) {
@@ -56,25 +60,35 @@ public class ArchiveResource {
             filename = repository.getSlug() + "." + format.getExtension();
         }
 
-        // The service will throw a NoSuchEntityException if the ref doesn't exist but using StreamingOutput means the
-        // response will be committed by that point, so our ExceptionMappers won't kick in unless we validate the ref
-        // exists up front.
-        if (repositoryMetadataService.resolveRef(repository, ref) == null) {
+        if (ref == null) {
+            ref = repositoryMetadataService.getDefaultBranch(repository).getId();
+        } else if (repositoryMetadataService.resolveRef(repository, ref) == null) {
+            // The ArchiveService will throw a NoSuchEntityException if the ref doesn't exist but using StreamingOutput
+            // means the response will be committed by that point, so our ExceptionMappers won't kick in unless we
+            // validate the ref exists up front.
             throw new NoSuchEntityException(i18nService.getKeyedText("stash.archive.object.not.found",
                     "{0} does not exist in repository ''{1}''", ref, repository.getName()));
         }
+        final String resolvedRef = ref;
 
         StreamingOutput stream = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                archiveService.stream(repository, format, ref, outputStream);
+                archiveService.stream(repository, format, resolvedRef, outputStream);
             }
         };
 
-        return ResponseFactory
-                .ok(stream)
-                .header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
-                .build();
+        // The ArchiveService will acquire a ticket for us, but let's acquire one eagerly so we can take advantage
+        // of out ExceptionMappers translating the ResourceBusyException automatically for us
+        Ticket ticket = throttleService.acquireTicket("scm-hosting");
+        try {
+            return ResponseFactory
+                    .ok(stream)
+                    .header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
+                    .build();
+        } finally {
+            ticket.release();
+        }
     }
 
 }
