@@ -2,6 +2,7 @@ package com.atlassian.stash.archive.rest;
 
 import com.atlassian.plugins.rest.common.interceptor.InterceptorChain;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.stash.archive.ArchiveFormat;
 import com.atlassian.stash.archive.ArchiveService;
 import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.rest.interceptor.ResourceContextInterceptor;
@@ -33,15 +34,25 @@ public class ArchiveResource {
 
     @GET
     public Response stream(final @Context Repository repository,
-                           final @QueryParam("format") @DefaultValue("zip") String type,
+                           final @QueryParam("format") @DefaultValue("zip") String extension,
                            final @QueryParam("ref") @DefaultValue("HEAD") String ref) {
+        final ArchiveFormat format = ArchiveFormat.forExtension(extension);
+
+        if (format == null) {
+            return ResponseFactory.status(Response.Status.BAD_REQUEST).entity("Invalid format: " + extension).build();
+        }
+
         StreamingOutput stream = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                archiveService.stream(repository, type, ref, outputStream);
+                archiveService.stream(repository, format, ref, outputStream);
             }
         };
-        return ResponseFactory.ok(stream).build();
+        String filename = repository.getSlug() + "." + format.getExtension();
+        return ResponseFactory
+                .ok(stream)
+                .header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
+                .build();
     }
 
 }

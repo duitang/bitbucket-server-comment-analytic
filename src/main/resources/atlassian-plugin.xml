@@ -8,7 +8,9 @@
     <component-import key="git-scm" interface="com.atlassian.stash.scm.git.GitScm" />
     <component-import key="i18nService" interface="com.atlassian.stash.i18n.I18nService" />
 
-    <component key="archive-service" class="com.atlassian.stash.archive.ArchiveService" />
+    <component key="archive-service" class="com.atlassian.stash.archive.DefaultArchiveService" public="true">
+        <interface>com.atlassian.stash.archive.ArchiveService</interface>
+    </component>
 
     <rest key="archive-rest" path="/archive" version="1.0">
         <dispatcher>REQUEST</dispatcher>
