@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.stash</groupId>
+        <artifactId>stash-plugins-parent</artifactId>
+        <version>1.2.0</version>
+    </parent>
+    <artifactId>stash-archive</artifactId>
+    <packaging>atlassian-plugin</packaging>
+    <name>Stash Archive Plugin</name>
+    <description>Provides archiving of Git repositories hosted by Stash</description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-stash-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <products>
+                        <product>
+                            <id>stash</id>
+                            <instanceId>stash</instanceId>
+                            <version>${project.version}</version>
+                            <dataVersion>${project.version}</dataVersion>
+                        </product>
+                    </products>
+                </configuration>
+                <version>${amps.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>net.sf.alchim</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <!-- Stash API/SPI -->
+        <dependency>
+            <groupId>com.atlassian.stash</groupId>
+            <artifactId>stash-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.stash</groupId>
+            <artifactId>stash-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.stash</groupId>
+            <artifactId>stash-rest-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Others (provided by the Stash and the plugin system) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <amps.version>4.0</amps.version>
+    </properties>
+</project>
