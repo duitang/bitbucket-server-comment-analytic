@@ -35,7 +35,8 @@ public class ArchiveResource {
     @GET
     public Response stream(final @Context Repository repository,
                            final @QueryParam("format") @DefaultValue("zip") String extension,
-                           final @QueryParam("ref") @DefaultValue("HEAD") String ref) {
+                           final @QueryParam("ref") @DefaultValue("HEAD") String ref,
+                           @QueryParam("filename") String filename) {
         final ArchiveFormat format = ArchiveFormat.forExtension(extension);
 
         if (format == null) {
@@ -48,7 +49,9 @@ public class ArchiveResource {
                 archiveService.stream(repository, format, ref, outputStream);
             }
         };
-        String filename = repository.getSlug() + "." + format.getExtension();
+        if (filename == null) {
+            filename = repository.getSlug() + "." + format.getExtension();
+        }
         return ResponseFactory
                 .ok(stream)
                 .header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
