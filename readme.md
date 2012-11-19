@@ -14,11 +14,11 @@ You can change the output using the following query parameters:
 
 * ```filename=<name>``` will change the name of the downloaded file
 
-* ```ref=<branch|tag|sha|ref>``` will specify the ref to download
+* ```at=<branch|tag|sha|ref>``` will specify the ref to download
 
 For example, the URL:
 
-```https://<stash-base-url>/rest/archive/latest/projects/TEST/repos/my-cool-repo?format=tar.gz&ref=release-1.3.0&filename=cool-1.3.0.tar.gz```
+```https://<stash-base-url>/rest/archive/latest/projects/TEST/repos/my-cool-repo?format=tar.gz&at=release-1.3.0&filename=cool-1.3.0.tar.gz```
 
 Will yield ```cool-1.3.0.tar.gz```, containing the repository contents at the  ```release-1.3.0``` tag.
 

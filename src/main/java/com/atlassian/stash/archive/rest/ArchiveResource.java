@@ -48,7 +48,7 @@ public class ArchiveResource {
     @GET
     public Response stream(final @Context Repository repository,
                            final @QueryParam("format") @DefaultValue("zip") String extension,
-                           @QueryParam("ref") String ref,
+                           @QueryParam("at") String at,
                            @QueryParam("filename") String filename) {
         final ArchiveFormat format = ArchiveFormat.forExtension(extension);
         if (format == null) {
@@ -60,16 +60,16 @@ public class ArchiveResource {
             filename = repository.getSlug() + "." + format.getExtension();
         }
 
-        if (ref == null) {
-            ref = repositoryMetadataService.getDefaultBranch(repository).getId();
-        } else if (repositoryMetadataService.resolveRef(repository, ref) == null) {
+        if (at == null) {
+            at = repositoryMetadataService.getDefaultBranch(repository).getId();
+        } else if (repositoryMetadataService.resolveRef(repository, at) == null) {
             // The ArchiveService will throw a NoSuchEntityException if the ref doesn't exist but using StreamingOutput
             // means the response will be committed by that point, so our ExceptionMappers won't kick in unless we
             // validate the ref exists up front.
             throw new NoSuchEntityException(i18nService.getKeyedText("stash.archive.object.not.found",
-                    "{0} does not exist in repository ''{1}''", ref, repository.getName()));
+                    "{0} does not exist in repository ''{1}''", at, repository.getName()));
         }
-        final String resolvedRef = ref;
+        final String resolvedRef = at;
 
         StreamingOutput stream = new StreamingOutput() {
             @Override
