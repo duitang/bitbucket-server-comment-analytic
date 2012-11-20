@@ -5,24 +5,20 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.stash.archive.ArchiveFormat;
 import com.atlassian.stash.archive.ArchiveService;
 import com.atlassian.stash.exception.ArgumentValidationException;
-import com.atlassian.stash.exception.NoSuchEntityException;
 import com.atlassian.stash.i18n.I18nService;
 import com.atlassian.stash.repository.Repository;
 import com.atlassian.stash.repository.RepositoryMetadataService;
 import com.atlassian.stash.rest.interceptor.ResourceContextInterceptor;
 import com.atlassian.stash.rest.util.ResourcePatterns;
-import com.atlassian.stash.rest.util.ResponseFactory;
-import com.atlassian.stash.throttle.ThrottleService;
-import com.atlassian.stash.throttle.Ticket;
+import com.sun.jersey.api.core.HttpContext;
+import com.sun.jersey.api.core.HttpResponseContext;
 import com.sun.jersey.spi.resource.Singleton;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
-import java.io.OutputStream;
 
 @Path(ResourcePatterns.REPOSITORY_URI)
 @InterceptorChain(ResourceContextInterceptor.class)
@@ -35,21 +31,20 @@ public class ArchiveResource {
     private final ArchiveService archiveService;
     private final RepositoryMetadataService repositoryMetadataService;
     private final I18nService i18nService;
-    private final ThrottleService throttleService;
 
     public ArchiveResource(ArchiveService archiveService, RepositoryMetadataService repositoryMetadataService,
-                           I18nService i18nService, ThrottleService throttleService) {
+                           I18nService i18nService) {
         this.archiveService = archiveService;
         this.repositoryMetadataService = repositoryMetadataService;
         this.i18nService = i18nService;
-        this.throttleService = throttleService;
     }
 
     @GET
     public Response stream(final @Context Repository repository,
                            final @QueryParam("format") @DefaultValue("zip") String extension,
                            @QueryParam("ref") String ref,
-                           @QueryParam("filename") String filename) {
+                           @QueryParam("filename") String filename,
+                           @Context HttpContext httpContext) {
         final ArchiveFormat format = ArchiveFormat.forExtension(extension);
         if (format == null) {
             throw new ArgumentValidationException(i18nService.getKeyedText("stash.archive.unsupported.format",
@@ -62,33 +57,20 @@ public class ArchiveResource {
 
         if (ref == null) {
             ref = repositoryMetadataService.getDefaultBranch(repository).getId();
-        } else if (repositoryMetadataService.resolveRef(repository, ref) == null) {
-            // The ArchiveService will throw a NoSuchEntityException if the ref doesn't exist but using StreamingOutput
-            // means the response will be committed by that point, so our ExceptionMappers won't kick in unless we
-            // validate the ref exists up front.
-            throw new NoSuchEntityException(i18nService.getKeyedText("stash.archive.object.not.found",
-                    "{0} does not exist in repository ''{1}''", ref, repository.getName()));
         }
+
         final String resolvedRef = ref;
 
-        StreamingOutput stream = new StreamingOutput() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                archiveService.stream(repository, format, resolvedRef, outputStream);
-            }
-        };
-
-        // The ArchiveService will acquire a ticket for us, but let's acquire one eagerly so we can take advantage
-        // of out ExceptionMappers translating the ResourceBusyException automatically for us
-        Ticket ticket = throttleService.acquireTicket("scm-hosting");
+        final HttpResponseContext responseContext = httpContext.getResponse();
+        responseContext.getHttpHeaders().add("Content-Disposition", String.format("attachment; filename=\"%s\"", filename));
         try {
-            return ResponseFactory
-                    .ok(stream)
-                    .header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
-                    .build();
-        } finally {
-            ticket.release();
+            archiveService.stream(repository, format, resolvedRef, responseContext.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to get output stream for response", e);
         }
+        responseContext.setStatus(200);
+
+        return responseContext.getResponse();
     }
 
 }
