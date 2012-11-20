@@ -1,12 +1,18 @@
 # Stash Archive Plugin
 
-Provides a REST end-point for downloading repositories in popular archive formats.
+Provides a button on repository views for downloading a zip archive of your source, and a REST API with some additional features.
 
-The basic form for an archive URL is:
+### Download Button
+
+The Download button appears next to the clone URL on all repository views. By default it will download your the content at the HEAD of your default branch. Use the branch/tag selector on the Files or Commits view to select a different branch or tag to download.
+
+### REST API
+
+The basic form for an archive REST URL is:
 
 ```https://<stash-base-url>/rest/archive/latest/projects/<projectKey>/repos/<repoSlug>```
 
-This will provide a file named ```<repoSlug>.zip``` that contains your source at the HEAD of the repository's default branch.
+This will provide a file named ```<repoSlug>-<branch-name>.zip``` that contains your source at the HEAD of the repository's default branch.
 
 You can change the output using the following query parameters:
 
