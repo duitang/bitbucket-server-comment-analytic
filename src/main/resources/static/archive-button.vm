@@ -1,0 +1,6 @@
+<a href="#" id='download-archive-button' class='aui-button'>
+    <span class="icon"></span>
+    Download
+</a><script>
+    require('plugin/download-archive').onReady('#download-archive-button');
+</script>

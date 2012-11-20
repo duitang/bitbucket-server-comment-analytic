@@ -56,10 +56,6 @@ public class ArchiveResource {
                     "Unsupported format: ''{0}''", extension));
         }
 
-        if (filename == null) {
-            filename = repository.getSlug() + "." + format.getExtension();
-        }
-
         if (at == null) {
             at = repositoryMetadataService.getDefaultBranch(repository).getId();
         } else if (repositoryMetadataService.resolveRef(repository, at) == null) {
@@ -77,6 +73,11 @@ public class ArchiveResource {
                 archiveService.stream(repository, format, resolvedRef, outputStream);
             }
         };
+
+        if (filename == null) {
+            filename = String.format("%s-%s.%s", repository.getSlug(),
+                    resolvedRef.substring(resolvedRef.lastIndexOf("/") + 1), format.getExtension());
+        }
 
         // The ArchiveService will acquire a ticket for us, but let's acquire one eagerly so we can take advantage
         // of out ExceptionMappers translating the ResourceBusyException automatically for us

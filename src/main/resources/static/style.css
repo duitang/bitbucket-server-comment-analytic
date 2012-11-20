@@ -1,0 +1,11 @@
+#download-archive-button {
+    padding-left: 8px;
+}
+#download-archive-button > .icon {
+    background: url("icon-archive.png") no-repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 16px;
+    margin: -5px 2px 0 0;
+    padding-left: 16px;
+    vertical-align: middle;
+}

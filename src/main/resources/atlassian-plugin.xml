@@ -21,4 +21,18 @@
         <package>com.atlassian.stash.archive.rest</package>
     </rest>
 
+    <web-resource key="archive-resources" name="archive-resources">
+        <resource type="download" name="style.css" location="/static/style.css"/>
+        <resource type="download" name="archive.js" location="/static/archive.js"/>
+        <resource type="download" name="icon-archive.png" location="/static/icon-archive.png"/>
+        <context>stash.layout.repository</context>
+        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+    </web-resource>
+
+    <web-panel key="stash-repository-download-archive" name="Download archive" weight="10"
+               location="stash.web.repository.clone.before">
+        <resource name="view" type="velocity" location="/static/archive-button.vm"/>
+        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+    </web-panel>
+
 </atlassian-plugin>
