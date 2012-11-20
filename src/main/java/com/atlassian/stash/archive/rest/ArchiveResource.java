@@ -42,7 +42,7 @@ public class ArchiveResource {
     @GET
     public Response stream(final @Context Repository repository,
                            final @QueryParam("format") @DefaultValue("zip") String extension,
-                           @QueryParam("ref") String ref,
+                           @QueryParam("at") String at,
                            @QueryParam("filename") String filename,
                            @Context HttpContext httpContext) {
         final ArchiveFormat format = ArchiveFormat.forExtension(extension);
@@ -51,23 +51,26 @@ public class ArchiveResource {
                     "Unsupported format: ''{0}''", extension));
         }
 
+        if (at == null) {
+            at = repositoryMetadataService.getDefaultBranch(repository).getId();
+        }
+        final String resolvedRef = at;
+
         if (filename == null) {
-            filename = repository.getSlug() + "." + format.getExtension();
+            filename = String.format("%s-%s.%s", repository.getSlug(),
+                    resolvedRef.substring(resolvedRef.lastIndexOf("/") + 1), format.getExtension());
         }
-
-        if (ref == null) {
-            ref = repositoryMetadataService.getDefaultBranch(repository).getId();
-        }
-
-        final String resolvedRef = ref;
 
         final HttpResponseContext responseContext = httpContext.getResponse();
-        responseContext.getHttpHeaders().add("Content-Disposition", String.format("attachment; filename=\"%s\"", filename));
+        responseContext.getHttpHeaders()
+                .add("Content-Disposition", String.format("attachment; filename=\"%s\"", filename));
+
         try {
             archiveService.stream(repository, format, resolvedRef, responseContext.getOutputStream());
         } catch (IOException e) {
             throw new RuntimeException("Failed to get output stream for response", e);
         }
+
         responseContext.setStatus(200);
 
         return responseContext.getResponse();
