@@ -19,6 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.OutputStream;
 
 @Path(ResourcePatterns.REPOSITORY_URI)
 @InterceptorChain(ResourceContextInterceptor.class)
@@ -65,13 +66,14 @@ public class ArchiveResource {
         responseContext.getHttpHeaders()
                 .add("Content-Disposition", String.format("attachment; filename=\"%s\"", filename));
 
+        OutputStream committingOutputStream;
         try {
-            archiveService.stream(repository, format, resolvedRef, responseContext.getOutputStream());
+            committingOutputStream = new CommittingOutputStream(responseContext.getOutputStream(), responseContext);
         } catch (IOException e) {
             throw new RuntimeException("Failed to get output stream for response", e);
         }
 
-        responseContext.setStatus(200);
+        archiveService.stream(repository, format, resolvedRef, committingOutputStream);
 
         return responseContext.getResponse();
     }
