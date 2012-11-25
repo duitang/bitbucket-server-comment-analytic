@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +49,7 @@ public class ArchiveServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         // resolve the repository
         Matcher m = PATH_RX.matcher(req.getPathInfo());
         if (!m.find()) {
@@ -90,19 +91,26 @@ public class ArchiveServlet extends HttpServlet {
         }
         final String resolvedRef = at;
 
-        // set the archive name as specified by query param, or default to <repository>-<ref>.<extension>
+        // resolve the archive name as specified by query param, or default to <repository>-<ref>.<extension>
         String filename = trimToNull(req.getParameter("filename"));
         if (filename == null) {
             filename = String.format("%s-%s.%s", repository.getSlug(),
                     resolvedRef.substring(resolvedRef.lastIndexOf("/") + 1), format.getExtension());
         }
-        resp.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", filename));
+        final String contentDisposition = String.format("attachment; filename=\"%s\"", filename);
 
         // stream the response
         try {
-            resp.setStatus(OK);
-            resp.setContentType(APPLICATION_OCTET_STREAM);
-            archiveService.stream(repository, format, resolvedRef, resp.getOutputStream());
+            OutputStream wrapper = new ArchiveOutputStream(resp.getOutputStream()) {
+                @Override
+                protected void onFirstByte() {
+                    // set content headers and status once we successfully start streaming
+                    resp.setContentType(APPLICATION_OCTET_STREAM);
+                    resp.setHeader("Content-Disposition", contentDisposition);
+                    resp.setStatus(OK);
+                }
+            };
+            archiveService.stream(repository, format, resolvedRef, wrapper);
         } catch (ResourceBusyException e) {
             resp.sendError(UNAVAILABLE, e.getLocalizedMessage());
         } catch (NoSuchEntityException e) {
