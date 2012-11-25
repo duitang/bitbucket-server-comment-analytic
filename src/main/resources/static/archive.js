@@ -3,8 +3,9 @@ define('plugin/download-archive', ['jquery', 'aui', 'page/util/pageUtil', 'util/
         var $button = $(buttonSelector);
 
         var updateDownloadRef = function(revisionRef) {
-            $button.attr("href", AJS.contextPath() + "/rest/archive/latest/projects/" + pageUtil.getProjectKey() +
-                                 "/repos/" + pageUtil.getRepoSlug() + (revisionRef ? "?at=" + revisionRef : ""));
+            $button.attr("href", AJS.contextPath() + "/plugins/servlet/archive/projects/" +
+                encodeURIComponent(pageUtil.getProjectKey()) + "/repos/" + encodeURIComponent(pageUtil.getRepoSlug()) +
+                (revisionRef ? "?at=" + encodeURIComponent(revisionRef) : ""));
         };
 
         // let the server choose the default ref

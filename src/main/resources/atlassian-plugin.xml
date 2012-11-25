@@ -11,15 +11,10 @@
         <interface>com.atlassian.stash.archive.ArchiveService</interface>
     </component>
 
-    <rest key="archive-rest" path="/archive" version="1.0">
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <init-param>
-            <param-name>extension.filter.excludes</param-name>
-            <param-value>.*</param-value>
-        </init-param>
-        <package>com.atlassian.stash.archive.rest</package>
-    </rest>
+    <servlet key="archive-servlet" class="com.atlassian.stash.archive.ArchiveServlet">
+        <description>Stash Archive Servlet</description>
+        <url-pattern>/archive/*</url-pattern>
+    </servlet>
 
     <web-resource key="archive-resources" name="archive-resources">
         <resource type="download" name="style.css" location="/static/style.css"/>
