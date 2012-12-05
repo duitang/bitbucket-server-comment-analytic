@@ -43,6 +43,7 @@
             <plugin>
                 <groupId>net.sf.alchim</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>0.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
