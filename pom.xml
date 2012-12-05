@@ -11,7 +11,7 @@
 
     <groupId>com.atlassian.stash.plugin</groupId>
     <artifactId>stash-archive</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
 
     <name>Stash Archive Plugin</name>
     <description>Provides archiving of Git repositories hosted by Stash</description>
@@ -43,7 +43,6 @@
             <plugin>
                 <groupId>net.sf.alchim</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>0.7.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
