@@ -104,4 +104,10 @@
         <jdk.version>6</jdk.version>
     </properties>
 
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/tpettersen/stash-archive.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/tpettersen/stash-archive.git</developerConnection>
+        <url>https://bitbucket.org/tpettersen/stash-archive</url>
+    </scm>
+
 </project>
