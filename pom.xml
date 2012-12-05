@@ -2,15 +2,15 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.atlassian.stash</groupId>
-        <artifactId>stash-plugins-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
+
+    <groupId>com.atlassian.stash.plugin</groupId>
     <artifactId>stash-archive</artifactId>
-    <packaging>atlassian-plugin</packaging>
+    <version>1.0-SNAPSHOT</version>
+
     <name>Stash Archive Plugin</name>
     <description>Provides archiving of Git repositories hosted by Stash</description>
+    <packaging>atlassian-plugin</packaging>
+
     <build>
         <plugins>
             <plugin>
@@ -22,8 +22,8 @@
                         <product>
                             <id>stash</id>
                             <instanceId>stash</instanceId>
-                            <version>${project.version}</version>
-                            <dataVersion>${project.version}</dataVersion>
+                            <version>${stash.version}</version>
+                            <dataVersion>${stash.version}</dataVersion>
                         </product>
                     </products>
                 </configuration>
@@ -38,8 +38,30 @@
                 <groupId>net.sf.alchim</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.stash</groupId>
+                <artifactId>stash-parent</artifactId>
+                <version>${stash.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- Stash API/SPI -->
         <dependency>
@@ -57,17 +79,8 @@
             <artifactId>stash-scm-git-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.stash</groupId>
-            <artifactId>stash-rest-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
         <!-- Others (provided by the Stash and the plugin system) -->
-        <dependency>
-            <groupId>com.atlassian.plugins.rest</groupId>
-            <artifactId>atlassian-rest-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -86,6 +99,9 @@
     </dependencies>
 
     <properties>
-        <amps.version>4.0</amps.version>
+        <amps.version>4.1</amps.version>
+        <stash.version>2.0.0</stash.version>
+        <jdk.version>6</jdk.version>
     </properties>
+
 </project>
