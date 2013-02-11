@@ -112,9 +112,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.org/tpettersen/stash-archive.git</connection>
-        <developerConnection>scm:git:ssh://git@bitbucket.org/tpettersen/stash-archive.git</developerConnection>
-        <url>https://bitbucket.org/tpettersen/stash-archive</url>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/stash-archive.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/stash-archive.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/stash-archive</url>
     </scm>
 
 </project>
