@@ -5,17 +5,31 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
+    <!--
+        Import the GitScm component so it can be wired into components in this plugin. Services provided in the
+        stash-api don't require explicit imports, but GitScm is provided by stash-scm-git-api in the scm-git plugin
+    -->
     <component-import key="git-scm" interface="com.atlassian.stash.scm.git.GitScm" />
 
+    <!--
+        Define the ArchiveService as a component so it can be wired into other components. It is also marked with
+        public="true" in case other plugins wish to import and use it.
+    -->
     <component key="archive-service" class="com.atlassian.stash.archive.DefaultArchiveService" public="true">
         <interface>com.atlassian.stash.archive.ArchiveService</interface>
     </component>
 
+    <!--
+        Define a servlet to stream the output from the ArchiveService to the client.
+    -->
     <servlet key="archive-servlet" class="com.atlassian.stash.archive.ArchiveServlet">
         <description>Stash Archive Servlet</description>
         <url-pattern>/archive/*</url-pattern>
     </servlet>
 
+    <!--
+        Bind some view resources to the stash.layout.repository context (the layout used for all repository views)
+    -->
     <web-resource key="archive-resources" name="archive-resources">
         <resource type="download" name="style.css" location="/static/style.css"/>
         <resource type="download" name="archive.js" location="/static/archive.js"/>
@@ -24,6 +38,9 @@
         <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
     </web-resource>
 
+    <!--
+        Render the Download archive button immediately before the repository clone link in repository views.
+    -->
     <web-panel key="stash-repository-download-archive" name="Download archive" weight="10"
                location="stash.web.repository.clone.before">
         <resource name="view" type="velocity" location="/static/archive-button.vm"/>

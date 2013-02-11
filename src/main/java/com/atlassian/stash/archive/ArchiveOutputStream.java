@@ -4,9 +4,12 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Delegating {@link OutputStream} that allows behaviour to be triggered immediately before the first byte is written.
+ */
 public abstract class ArchiveOutputStream extends FilterOutputStream {
 
-    boolean written;
+    private boolean written;
 
     public ArchiveOutputStream(OutputStream outputStream) {
         super(outputStream);
@@ -14,25 +17,26 @@ public abstract class ArchiveOutputStream extends FilterOutputStream {
 
     @Override
     public void write(int i) throws IOException {
-        commitIfUncommitted();
+        checkFirstByte();
         super.write(i);
     }
 
     @Override
     public void write(byte[] bytes) throws IOException {
-        commitIfUncommitted();
+        checkFirstByte();
         super.write(bytes);
     }
 
     @Override
     public void write(byte[] bytes, int i, int i1) throws IOException {
-        commitIfUncommitted();
+        checkFirstByte();
         super.write(bytes, i, i1);
     }
 
-    private void commitIfUncommitted() {
+    private void checkFirstByte() {
         if (!written) {
             onFirstByte();
+            written = true;
         }
     }
 

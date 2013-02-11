@@ -3,6 +3,9 @@ package com.atlassian.stash.archive;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Archive file formats supported by git-archive.
+ */
 public enum ArchiveFormat {
 
     TAR("tar"),

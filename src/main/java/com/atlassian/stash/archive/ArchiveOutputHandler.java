@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Implementation of {@link CommandOutputHandler} that simply copies the output from the underlying process to the
+ * supplied {@link OutputStream}. This can be used to stream content from a process to a response, a file or any other
+ * output stream.
+ */
 public class ArchiveOutputHandler implements CommandOutputHandler<Void> {
 
     private static final Logger log = LoggerFactory.getLogger(ArchiveOutputHandler.class);
@@ -19,6 +24,10 @@ public class ArchiveOutputHandler implements CommandOutputHandler<Void> {
 
     private Watchdog watchdog;
 
+    /**
+     * @param bufferSize the size of the buffer used to copy bytes from the process to the output stream
+     * @param outputStream the output stream to write to
+     */
     public ArchiveOutputHandler(int bufferSize, OutputStream outputStream) {
         this.bufferSize = bufferSize;
         this.outputStream = outputStream;
@@ -42,17 +51,32 @@ public class ArchiveOutputHandler implements CommandOutputHandler<Void> {
     public void complete() throws ProcessException {
     }
 
+    /**
+     * The role of the {@link Watchdog} is to terminate runaway processes. This watchdog is set and periodically
+     * checked by the process handling framework. {@link CommandOutputHandler OutputHandlers} must periodically reset
+     * watchdogs or risk premature termination.
+     */
     public void setWatchdog(Watchdog watchdog) {
         this.watchdog = watchdog;
     }
 
-    protected void copyStream(final InputStream inputStream, final OutputStream outputStream) throws IOException {
+    /**
+     * Copy all bytes from the supplied {@link InputStream} to the supplied {@link OutputStream}.
+     *
+     * @param inputStream an input stream from the underlying process. (git-archive in this case)
+     * @param outputStream an output stream to copy bytes from the input stream to.
+     * @throws IOException if there was an issue reading from or writing to one of the streams
+     */
+    private void copyStream(final InputStream inputStream, final OutputStream outputStream) throws IOException {
         final byte[] buffer = new byte[bufferSize];
         long bytesCopied = 0;
         int n;
         while (-1 != (n = inputStream.read(buffer))) {
+            // Simply copy the input stream to the output stream
             outputStream.write(buffer, 0, n);
             bytesCopied += n;
+
+            // Reset the process watchdog every buffer cycle to prevent early termination of the process
             if (watchdog != null) {
                 watchdog.resetWatchdog();
             } else {
