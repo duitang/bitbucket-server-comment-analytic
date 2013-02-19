@@ -2,5 +2,7 @@
     <span class="aui-icon icon-download-archive">Download the current branch</span>
     Download
 </a><script>
-    require('plugin/download-archive').onReady('#download-archive-button');
+    AJS.$(document).ready(function() {
+        require('plugin/download-archive').onReady('#download-archive-button');
+    });
 </script>
