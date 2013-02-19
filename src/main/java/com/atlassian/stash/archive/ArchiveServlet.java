@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static javax.servlet.http.HttpServletResponse.*;
 import static org.apache.commons.lang.StringUtils.trimToNull;
 
 public class ArchiveServlet extends HttpServlet {
@@ -26,13 +27,6 @@ public class ArchiveServlet extends HttpServlet {
      * URIs for consistency.
      */
     private static final Pattern PATH_RX = Pattern.compile("/projects/([^/]+)/repos/([^/]+)/?$");
-
-    // HTTP Response codes
-    private static final int OK = 200;
-    private static final int BAD_REQUEST = 400;
-    private static final int UNAUTHORIZED = 401;
-    private static final int NOT_FOUND = 404;
-    private static final int UNAVAILABLE = 503;
 
     private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
@@ -59,7 +53,7 @@ public class ArchiveServlet extends HttpServlet {
         // problems parsing the URI or if the repository is missing.
         Matcher m = PATH_RX.matcher(req.getPathInfo());
         if (!m.find()) {
-            resp.sendError(BAD_REQUEST, i18nService.getText("stash.archive.bad.path",
+            resp.sendError(SC_BAD_REQUEST, i18nService.getText("stash.archive.bad.path",
                     "The end of the request path must match ''{0}''.", PATH_RX.pattern()));
             return;
         }
@@ -69,11 +63,11 @@ public class ArchiveServlet extends HttpServlet {
             // support anonymous access at time of writing) or because the context user doesn't have the REPO_READ
             // permission.
             if (authenticationContext.getCurrentUser() == null) {
-                resp.sendError(UNAUTHORIZED, i18nService.getText("stash.archive.not.authenticated",
+                resp.sendError(SC_UNAUTHORIZED, i18nService.getText("stash.archive.not.authenticated",
                     "You are not currently logged in."));
                 return;
             } else {
-                resp.sendError(NOT_FOUND, i18nService.getText("stash.archive.no.such.repository",
+                resp.sendError(SC_NOT_FOUND, i18nService.getText("stash.archive.no.such.repository",
                     "The specified repository does not exist or you have insufficient permissions to access it."));
                 return;
             }
@@ -87,7 +81,7 @@ public class ArchiveServlet extends HttpServlet {
         } else {
             format = ArchiveFormat.forExtension(extension);
             if (format == null) {
-                resp.sendError(BAD_REQUEST, i18nService.getText("stash.archive.unsupported.format",
+                resp.sendError(SC_BAD_REQUEST, i18nService.getText("stash.archive.unsupported.format",
                     "Unsupported format: ''{0}''", extension));
                 return;
             }
@@ -118,16 +112,16 @@ public class ArchiveServlet extends HttpServlet {
                     // a specific HTTP code.
                     resp.setContentType(APPLICATION_OCTET_STREAM);
                     resp.setHeader("Content-Disposition", contentDisposition);
-                    resp.setStatus(OK);
+                    resp.setStatus(SC_OK);
                 }
             };
             archiveService.stream(repository, format, resolvedRef, wrapper);
         } catch (ResourceBusyException e) {
             // the server is currently under too much load to service this request (see ThrottleService for more details)
-            resp.sendError(UNAVAILABLE, e.getLocalizedMessage());
+            resp.sendError(SC_SERVICE_UNAVAILABLE, e.getLocalizedMessage());
         } catch (NoSuchEntityException e) {
             // the requested ref does not exist
-            resp.sendError(NOT_FOUND, e.getLocalizedMessage());
+            resp.sendError(SC_NOT_FOUND, e.getLocalizedMessage());
         }
     }
 

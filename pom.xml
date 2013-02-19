@@ -30,6 +30,7 @@
                             <instanceId>stash</instanceId>
                             <version>${stash.version}</version>
                             <dataVersion>${stash.version}</dataVersion>
+                            <containerId>tomcat7x</containerId>
                         </product>
                     </products>
                 </configuration>

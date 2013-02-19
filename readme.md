@@ -4,7 +4,7 @@ Provides a button on repository views for downloading a zip archive of your sour
 
 ### Download Button
 
-The Download button appears next to the clone URL on all repository views. By default it will download your the content at the HEAD of your default branch. Use the branch/tag selector on the Files or Commits view to select a different branch or tag to download.
+The Download button appears next to the clone URL on all repository views. By default it will download your the content at the tip of your default branch. Use the branch/tag selector on the Files or Commits view to select a different branch or tag to download.
 
 ### REST API
 
