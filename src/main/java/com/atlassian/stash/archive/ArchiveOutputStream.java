@@ -1,5 +1,6 @@
 package com.atlassian.stash.archive;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,6 +8,7 @@ import java.io.OutputStream;
 /**
  * Delegating {@link OutputStream} that allows behaviour to be triggered immediately before the first byte is written.
  */
+@NotThreadSafe
 public abstract class ArchiveOutputStream extends FilterOutputStream {
 
     private boolean written;
