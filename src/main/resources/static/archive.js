@@ -15,8 +15,9 @@ define('plugin/download-archive', ['jquery', 'aui', 'model/page-state', 'util/na
                 (revisionRef ? "?at=" + encodeURIComponent(revisionRef) : ""));
         };
 
-        // On page load, grab the current ref out of the current page's 'until' query parameter
-        updateDownloadRef(decodeURIComponent(navBuilder.parse(window.location.href).getQueryParamValue('until')));
+        // On page load, grab the current ref out of page-state
+        var currentRef = pageState.getRevisionRef() ? pageState.getRevisionRef().id : null;
+        updateDownloadRef(currentRef);
 
         // Also, bind to the branch selector's change event to grab the newly selected ref
         eve.on('stash.feature.repository.revisionReferenceSelector.revisionRefChanged', function(revisionRef, context) {
