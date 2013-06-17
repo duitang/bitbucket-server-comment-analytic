@@ -39,12 +39,12 @@
     </web-resource>
 
     <!--
-        Render the Download archive button immediately before the repository clone link in repository views.
+        Render the Download archive button immediately before the repository clone button in repository views.
     -->
-    <web-panel key="stash-repository-download-archive" name="Download archive" weight="10"
-               location="stash.web.repository.clone.before">
-        <resource name="view" type="velocity" location="/static/archive-button.vm"/>
-        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
-    </web-panel>
+    <web-item key="stash-repository-download-archive" name="Download archive" weight="110"
+            section="stash.web.repository.header.buttons">
+        <label key="stash.web.repository.download-archive">Download</label>
+        <link linkId="download-archive-button">/</link>
+    </web-item>
 
 </atlassian-plugin>
