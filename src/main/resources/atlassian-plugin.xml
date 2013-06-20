@@ -44,7 +44,9 @@
     <web-item key="stash-repository-download-archive" name="Download archive" weight="110"
             section="stash.web.repository.header.buttons">
         <label key="stash.web.repository.download-archive">Download</label>
+        <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
         <link linkId="download-archive-button">/</link>
+        <param name="stashIconClass">aui-icon icon-download-archive</param>
     </web-item>
 
 </atlassian-plugin>

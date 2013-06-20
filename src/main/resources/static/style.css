@@ -1,9 +1,3 @@
-#download-archive-button:before {
-    display: inline-block;
-    content: "";
-    width: 16px;
-    height: 16px;
+.icon-download-archive {
     background: url("icon-archive.png") no-repeat scroll 0 0 transparent;
-    vertical-align: text-top;
-    margin-right: 10px;
 }
