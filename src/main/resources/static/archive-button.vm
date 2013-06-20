@@ -1,8 +1,0 @@
-<a href="#" id='download-archive-button' class='aui-button'>
-    <span class="aui-icon icon-download-archive">Download the current branch</span>
-    Download
-</a><script>
-    AJS.$(document).ready(function() {
-        require('plugin/download-archive').onReady('#download-archive-button');
-    });
-</script>

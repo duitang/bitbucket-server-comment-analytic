@@ -15,14 +15,17 @@ define('plugin/download-archive', ['jquery', 'aui', 'model/page-state', 'util/na
                 (revisionRef ? "?at=" + encodeURIComponent(revisionRef) : ""));
         };
 
-        // On page load, grab the current ref out of the current page's 'at' query parameter
-        updateDownloadRef(navBuilder.parse(window.location.href).getQueryParamValue('at'));
+        // On page load, grab the current ref out of page-state
+        var currentRef = pageState.getRevisionRef() ? pageState.getRevisionRef().id : null;
+        updateDownloadRef(currentRef);
 
         // Also, bind to the branch selector's change event to grab the newly selected ref
-        eve.on('stash.widget.branchselector.revisionRefChanged', function(revisionRef, context) {
-            if (!revisionRef.isDefault()) {
-                updateDownloadRef(revisionRef.id);
-            }
+        eve.on('stash.feature.repository.revisionReferenceSelector.revisionRefChanged', function(revisionRef, context) {
+            updateDownloadRef(revisionRef.id);
         });
     }
+});
+
+AJS.$(function() {
+    require('plugin/download-archive').onReady('#download-archive-button');
 });
