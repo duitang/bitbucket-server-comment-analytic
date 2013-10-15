@@ -5,8 +5,8 @@
 
     <parent>
         <groupId>com.atlassian.pom</groupId>
-        <artifactId>public-pom</artifactId>
-        <version>3.0.1</version>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>29.16</version>
     </parent>
 
     <groupId>com.atlassian.stash.plugin</groupId>
