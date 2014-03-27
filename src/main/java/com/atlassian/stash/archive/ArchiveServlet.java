@@ -57,7 +57,7 @@ public class ArchiveServlet extends HttpServlet {
                     "The end of the request path must match ''{0}''.", PATH_RX.pattern()));
             return;
         }
-        Repository repository = repositoryService.findBySlug(m.group(1), m.group(2));
+        Repository repository = repositoryService.getBySlug(m.group(1), m.group(2));
         if (repository == null) {
             // Couldn't resolve the repository.. check if this is because the user isn't logged in (Stash didn't
             // support anonymous access at time of writing) or because the context user doesn't have the REPO_READ
