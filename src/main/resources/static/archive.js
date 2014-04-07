@@ -1,4 +1,18 @@
-define('plugin/download-archive', ['jquery', 'aui', 'model/page-state', 'util/navbuilder', 'exports'], function ($, AJS, pageState, navBuilder, exports) {
+define('plugin/download-archive', [
+    'jquery',
+    'aui',
+    'model/page-state',
+    'util/navbuilder',
+    'exports'
+], function(
+    $,
+    AJS,
+    pageState,
+    navBuilder,
+    exports
+) {
+
+
     exports.onReady = function (buttonSelector) {
         var $button = $(buttonSelector);
 
@@ -10,8 +24,8 @@ define('plugin/download-archive', ['jquery', 'aui', 'model/page-state', 'util/na
          */
         var updateDownloadRef = function(revisionRef) {
             $button.attr("href", AJS.contextPath() + "/plugins/servlet/archive/projects/" +
-                encodeURIComponent(pageState.getProject().key) + "/repos/" +
-                encodeURIComponent(pageState.getRepository().slug) +
+                encodeURIComponent(pageState.getProject().getKey()) + "/repos/" +
+                encodeURIComponent(pageState.getRepository().getSlug()) +
                 (revisionRef ? "?at=" + encodeURIComponent(revisionRef) : ""));
         };
 
