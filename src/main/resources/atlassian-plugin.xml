@@ -50,7 +50,7 @@
         <label key="stash.web.repository.download-archive">Download</label>
         <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
         <link linkId="download-archive-button">/</link>
-        <param name="stashIconClass">icon-download-archive</param>
+        <param name="stashIconClass">aui-icon icon-download-archive</param>
     </web-item>
 
 </atlassian-plugin>
