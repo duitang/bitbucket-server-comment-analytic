@@ -43,9 +43,9 @@
     </web-resource>
 
     <!--
-        Render the Download archive button immediately before the repository clone button in repository views.
+        Render the Download archive button immediately after the repository fork action in repository sidebar.
     -->
-    <web-item key="stash-repository-download-archive" name="Download archive" weight="110"
+    <web-item key="stash-repository-download-archive" name="Download archive" weight="150"
             section="stash.web.repository.header.buttons">
         <label key="stash.web.repository.download-archive">Download</label>
         <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
