@@ -33,6 +33,11 @@
                             <containerId>tomcat7x</containerId>
                         </product>
                     </products>
+                    <systemPropertyVariables>
+                        <!-- Our func tests don't know how to wait for the system to be available, so force
+                             it to come up synchronously so that Cargo will block for us -->
+                        <johnson.spring.lifecycle.synchronousStartup>true</johnson.spring.lifecycle.synchronousStartup>
+                    </systemPropertyVariables>
                 </configuration>
                 <version>${amps.version}</version>
             </plugin>
