@@ -1,11 +1,11 @@
-package com.atlassian.stash.archive;
+package com.atlassian.bitbucket.archive;
 
-import com.atlassian.stash.exception.CommandFailedException;
-import com.atlassian.stash.exception.NoSuchEntityException;
-import com.atlassian.stash.i18n.I18nService;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.scm.CommandExitHandler;
-import com.atlassian.stash.scm.DefaultCommandExitHandler;
+import com.atlassian.bitbucket.NoSuchEntityException;
+import com.atlassian.bitbucket.i18n.I18nService;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.scm.CommandExitHandler;
+import com.atlassian.bitbucket.scm.CommandFailedException;
+import com.atlassian.bitbucket.scm.DefaultCommandExitHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

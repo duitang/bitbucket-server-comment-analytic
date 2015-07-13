@@ -1,4 +1,4 @@
-package com.atlassian.stash.archive;
+package com.atlassian.bitbucket.archive;
 
 import java.util.HashMap;
 import java.util.Map;

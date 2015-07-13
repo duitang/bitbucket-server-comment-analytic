@@ -1,4 +1,4 @@
-package com.atlassian.stash.archive;
+package com.atlassian.bitbucket.archive;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.FilterOutputStream;

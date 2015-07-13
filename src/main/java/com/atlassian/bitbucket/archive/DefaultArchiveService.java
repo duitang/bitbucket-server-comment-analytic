@@ -1,10 +1,10 @@
-package com.atlassian.stash.archive;
+package com.atlassian.bitbucket.archive;
 
-import com.atlassian.stash.i18n.I18nService;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.scm.git.GitScm;
-import com.atlassian.stash.throttle.ThrottleService;
-import com.atlassian.stash.throttle.Ticket;
+import com.atlassian.bitbucket.i18n.I18nService;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.scm.git.GitScm;
+import com.atlassian.bitbucket.throttle.ThrottleService;
+import com.atlassian.bitbucket.throttle.Ticket;
 
 import java.io.OutputStream;
 
@@ -16,7 +16,7 @@ public class DefaultArchiveService implements ArchiveService {
     private static final int BUFFER_SIZE = 32 * 1024;
 
     /**
-     * Used to execute git commands in Stash repositories.
+     * Used to execute git commands in Bitbucket repositories.
      */
     private final GitScm gitScm;
     /**
@@ -41,8 +41,7 @@ public class DefaultArchiveService implements ArchiveService {
         // ticket. This limits the number of concurrent archive operations that can occur simultaneously and conserves
         // precious server resources - see ThrottleService for more details. Note that repository hosting resources
         // also use the "scm-hosting" name, so archive operations will be lumped in the same bucket as a push or clone.
-        Ticket ticket = throttleService.acquireTicket("scm-hosting");
-        try {
+        try (Ticket ignored = throttleService.acquireTicket("scm-hosting")){
             // Create & call a new git-archive command in the target repository with the requested parameters
             gitScm.getCommandBuilderFactory()
                     .builder(repository)
@@ -52,9 +51,6 @@ public class DefaultArchiveService implements ArchiveService {
                     .exitHandler(new ArchiveExitHandler(i18nService, repository, ref))
                     .build(new ArchiveOutputHandler(BUFFER_SIZE, outputStream))
                     .call();
-        } finally {
-            // Release the "scm-hosting" ticket back to the pool
-            ticket.release();
         }
     }
 
