@@ -47,7 +47,7 @@
         Render the Download archive button immediately after the repository fork action in repository sidebar.
     -->
     <web-item key="bitbucket-repository-download-archive" name="Download archive" weight="150"
-            section="stash.web.repository.header.buttons">
+            section="bitbucket.web.repository.header.buttons">
         <label key="stash.web.repository.download-archive">Download</label>
         <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
         <link linkId="download-archive-button">/</link>
