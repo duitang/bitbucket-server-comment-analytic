@@ -1,12 +1,12 @@
-package com.atlassian.stash.archive;
+package com.atlassian.bitbucket.archive;
 
-import com.atlassian.stash.exception.NoSuchEntityException;
-import com.atlassian.stash.exception.ResourceBusyException;
-import com.atlassian.stash.i18n.I18nService;
-import com.atlassian.stash.repository.Repository;
-import com.atlassian.stash.repository.RepositoryMetadataService;
-import com.atlassian.stash.repository.RepositoryService;
-import com.atlassian.stash.user.StashAuthenticationContext;
+import com.atlassian.bitbucket.NoSuchEntityException;
+import com.atlassian.bitbucket.auth.AuthenticationContext;
+import com.atlassian.bitbucket.repository.RefService;
+import com.atlassian.bitbucket.throttle.ResourceBusyException;
+import com.atlassian.bitbucket.i18n.I18nService;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.repository.RepositoryService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +23,7 @@ import static org.apache.commons.lang.StringUtils.trimToNull;
 public class ArchiveServlet extends HttpServlet {
 
     /**
-     * {@link Pattern} for parsing the project key and repository name from the URI. This mirrors the Stash core
+     * {@link Pattern} for parsing the project key and repository name from the URI. This mirrors the Bitbucket core
      * URIs for consistency.
      */
     private static final Pattern PATH_RX = Pattern.compile("/projects/([^/]+)/repos/([^/]+)/?$");
@@ -31,17 +31,17 @@ public class ArchiveServlet extends HttpServlet {
     private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
     private final ArchiveService archiveService;
-    private final RepositoryMetadataService repositoryMetadataService;
+    private final RefService refService;
     private final RepositoryService repositoryService;
     private final I18nService i18nService;
-    private final StashAuthenticationContext authenticationContext;
+    private final AuthenticationContext authenticationContext;
 
     // This constructor's dependencies are wired automatically by the plugin system
-    public ArchiveServlet(ArchiveService archiveService, RepositoryMetadataService repositoryMetadataService,
+    public ArchiveServlet(ArchiveService archiveService, RefService refService,
                           RepositoryService repositoryService, I18nService i18nService,
-                          StashAuthenticationContext authenticationContext) {
+                          AuthenticationContext authenticationContext) {
         this.archiveService = archiveService;
-        this.repositoryMetadataService = repositoryMetadataService;
+        this.refService = refService;
         this.repositoryService = repositoryService;
         this.i18nService = i18nService;
         this.authenticationContext = authenticationContext;
@@ -59,7 +59,7 @@ public class ArchiveServlet extends HttpServlet {
         }
         Repository repository = repositoryService.getBySlug(m.group(1), m.group(2));
         if (repository == null) {
-            // Couldn't resolve the repository.. check if this is because the user isn't logged in (Stash didn't
+            // Couldn't resolve the repository.. check if this is because the user isn't logged in (Bitbucket didn't
             // support anonymous access at time of writing) or because the context user doesn't have the REPO_READ
             // permission.
             if (authenticationContext.getCurrentUser() == null) {
@@ -90,7 +90,7 @@ public class ArchiveServlet extends HttpServlet {
         // If the ref is unspecified, default to HEAD of the default branch
         String at = trimToNull(req.getParameter("at"));
         if (at == null) {
-            at = repositoryMetadataService.getDefaultBranch(repository).getId();
+            at = refService.getDefaultBranch(repository).getId();
         }
         final String resolvedRef = at;
 

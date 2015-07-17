@@ -7,28 +7,29 @@
 
     <!--
         Import the GitScm component so it can be wired into components in this plugin. Services provided in the
-        stash-api don't require explicit imports, but GitScm is provided by stash-scm-git-api in the scm-git plugin
+        bitbucket-api don't require explicit imports, but GitScm is provided by bitbucket-git-api
+        in the bitbucket-git plugin.
     -->
-    <component-import key="git-scm" interface="com.atlassian.stash.scm.git.GitScm" />
+    <component-import key="git-scm" interface="com.atlassian.bitbucket.scm.git.GitScm" />
 
     <!--
         Define the ArchiveService as a component so it can be wired into other components. It is also marked with
         public="true" in case other plugins wish to import and use it.
     -->
-    <component key="archive-service" class="com.atlassian.stash.archive.DefaultArchiveService" public="true">
-        <interface>com.atlassian.stash.archive.ArchiveService</interface>
+    <component key="archive-service" class="com.atlassian.bitbucket.archive.DefaultArchiveService" public="true">
+        <interface>com.atlassian.bitbucket.archive.ArchiveService</interface>
     </component>
 
     <!--
         Define a servlet to stream the output from the ArchiveService to the client.
     -->
-    <servlet key="archive-servlet" class="com.atlassian.stash.archive.ArchiveServlet">
-        <description>Stash Archive Servlet</description>
+    <servlet key="archive-servlet" class="com.atlassian.bitbucket.archive.ArchiveServlet">
+        <description>Bitbucket Archive Servlet</description>
         <url-pattern>/archive/*</url-pattern>
     </servlet>
 
     <!--
-        Bind some view resources to the stash.layout.repository context (the layout used for all repository views)
+        Bind some view resources to the bitbucket.layout.repository context (the layout used for all repository views)
     -->
     <web-resource key="archive-resources" name="archive-resources">
         <resource type="download" name="style.css" location="/static/style.css"/>
@@ -38,18 +39,19 @@
             <param name="content-type" value="image/svg+xml"/>
         </resource>
 
-        <context>stash.layout.repository</context>
-        <dependency>com.atlassian.stash.stash-web-plugin:global</dependency>
+        <context>bitbucket.layout.repository</context>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web:global</dependency>
     </web-resource>
 
     <!--
         Render the Download archive button immediately after the repository fork action in repository sidebar.
     -->
-    <web-item key="stash-repository-download-archive" name="Download archive" weight="150"
-            section="stash.web.repository.header.buttons">
+    <web-item key="bitbucket-repository-download-archive" name="Download archive" weight="150"
+            section="bitbucket.web.repository.header.buttons">
         <label key="stash.web.repository.download-archive">Download</label>
         <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
         <link linkId="download-archive-button">/</link>
+        <!-- TODO to be renamed when STASHDEV-10062 is ready -->
         <param name="stashIconClass">aui-icon icon-download-archive</param>
     </web-item>
 

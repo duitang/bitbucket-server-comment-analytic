@@ -1,13 +1,13 @@
-package com.atlassian.stash.archive;
+package com.atlassian.bitbucket.archive;
 
-import com.atlassian.stash.exception.NoSuchEntityException;
-import com.atlassian.stash.exception.ResourceBusyException;
-import com.atlassian.stash.repository.Repository;
+import com.atlassian.bitbucket.NoSuchEntityException;
+import com.atlassian.bitbucket.repository.Repository;
+import com.atlassian.bitbucket.throttle.ResourceBusyException;
 
 import java.io.OutputStream;
 
 /**
- * Service for handling {@code git-archive} invocations in Stash.
+ * Service for handling {@code git-archive} invocations in Bitbucket.
  */
 public interface ArchiveService {
 

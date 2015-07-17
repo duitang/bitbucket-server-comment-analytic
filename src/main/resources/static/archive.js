@@ -2,7 +2,7 @@ define('plugin/download-archive', [
     'jquery',
     'aui',
     'model/page-state',
-    'util/navbuilder',
+    'bitbucket/util/navbuilder',
     'exports'
 ], function(
     $,
