@@ -1,7 +1,7 @@
 define('plugin/download-archive', [
     'jquery',
     'aui',
-    'model/page-state',
+    'bitbucket/util/state',
     'bitbucket/util/navbuilder',
     'exports'
 ], function(
@@ -24,13 +24,13 @@ define('plugin/download-archive', [
          */
         var updateDownloadRef = function(revisionRef) {
             $button.attr("href", AJS.contextPath() + "/plugins/servlet/archive/projects/" +
-                encodeURIComponent(pageState.getProject().getKey()) + "/repos/" +
-                encodeURIComponent(pageState.getRepository().getSlug()) +
+                encodeURIComponent(pageState.getProject().key) + "/repos/" +
+                encodeURIComponent(pageState.getRepository().slug) +
                 (revisionRef ? "?at=" + encodeURIComponent(revisionRef) : ""));
         };
 
         // On page load, grab the current ref out of page-state
-        var currentRef = pageState.getRevisionRef() ? pageState.getRevisionRef().id : null;
+        var currentRef = pageState.getRef() ? pageState.getRef().id : null;
         updateDownloadRef(currentRef);
 
         // Also, bind to the branch selector's change event to grab the newly selected ref

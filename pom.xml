@@ -106,14 +106,14 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <properties>
-        <amps.version>6.1.0-30bbe49</amps.version>
-        <bitbucket.version>4.0.0-m1</bitbucket.version>
+        <amps.version>6.1.0-e937d1f</amps.version>
+        <bitbucket.version>4.0.0-m19</bitbucket.version>
         <jdk.version>8</jdk.version>
     </properties>
 
