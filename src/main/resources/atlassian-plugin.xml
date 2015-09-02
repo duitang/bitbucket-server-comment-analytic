@@ -1,4 +1,4 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="com.atlassian.stash.plugin.stash-archive" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -40,7 +40,11 @@
         </resource>
 
         <context>bitbucket.layout.repository</context>
-        <dependency>com.atlassian.bitbucket.server.bitbucket-web:global</dependency>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web-api:amd</dependency>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web-api:aui</dependency>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web-api:jquery</dependency>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web-api:navbuilder</dependency>
+        <dependency>com.atlassian.bitbucket.server.bitbucket-web-api:state</dependency>
     </web-resource>
 
     <!--
@@ -51,8 +55,7 @@
         <label key="stash.web.repository.download-archive">Download</label>
         <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
         <link linkId="download-archive-button">/</link>
-        <!-- TODO to be renamed when STASHDEV-10062 is ready -->
-        <param name="stashIconClass">aui-icon icon-download-archive</param>
+        <param name="iconClass">aui-icon icon-download-archive</param>
     </web-item>
 
 </atlassian-plugin>
