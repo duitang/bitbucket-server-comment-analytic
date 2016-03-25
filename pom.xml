@@ -9,12 +9,12 @@
         <version>3.0.11</version>
     </parent>
 
-    <groupId>com.atlassian.bitbucket.server</groupId>
-    <artifactId>bitbucket-archive</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <groupId>com.duitang.util.bitbucket.server</groupId>
+    <artifactId>bitbucket-comment-analytic</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
-    <name>Bitbucket Server Archive Plugin</name>
-    <description>Provides archiving of Git repositories hosted by Bitbucket Server</description>
+    <name>Bitbucket Comments Plugin</name>
+    <description></description>
     <packaging>atlassian-plugin</packaging>
 
     <build>
@@ -85,11 +85,6 @@
         <dependency>
             <groupId>com.atlassian.bitbucket.server</groupId>
             <artifactId>bitbucket-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.bitbucket.server</groupId>
-            <artifactId>bitbucket-git-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

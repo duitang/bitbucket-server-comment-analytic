@@ -1,4 +1,4 @@
-package com.atlassian.bitbucket.archive;
+package com.duitang.util.bitbucket.comment.analytic;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.FilterOutputStream;
@@ -9,11 +9,11 @@ import java.io.OutputStream;
  * Delegating {@link OutputStream} that allows behaviour to be triggered immediately before the first byte is written.
  */
 @NotThreadSafe
-public abstract class ArchiveOutputStream extends FilterOutputStream {
+public abstract class CommentAnalyticOutputStream extends FilterOutputStream {
 
     private boolean written;
 
-    public ArchiveOutputStream(OutputStream outputStream) {
+    public CommentAnalyticOutputStream(OutputStream outputStream) {
         super(outputStream);
     }
 

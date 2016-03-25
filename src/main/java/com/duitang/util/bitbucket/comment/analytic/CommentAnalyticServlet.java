@@ -1,4 +1,4 @@
-package com.atlassian.bitbucket.archive;
+package com.duitang.util.bitbucket.comment.analytic;
 
 import com.atlassian.bitbucket.NoSuchEntityException;
 import com.atlassian.bitbucket.auth.AuthenticationContext;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import static javax.servlet.http.HttpServletResponse.*;
 import static org.apache.commons.lang.StringUtils.trimToNull;
 
-public class ArchiveServlet extends HttpServlet {
+public class CommentAnalyticServlet extends HttpServlet {
 
     /**
      * {@link Pattern} for parsing the project key and repository name from the URI. This mirrors the Bitbucket core
@@ -28,19 +28,19 @@ public class ArchiveServlet extends HttpServlet {
      */
     private static final Pattern PATH_RX = Pattern.compile("/projects/([^/]+)/repos/([^/]+)/?$");
 
-    private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+    private static final String APPLICATION_TEXT_PLAIN = "text/plain";
 
-    private final ArchiveService archiveService;
+    private final CommentAnalyticService commentAnalyticService;
     private final RefService refService;
     private final RepositoryService repositoryService;
     private final I18nService i18nService;
     private final AuthenticationContext authenticationContext;
 
     // This constructor's dependencies are wired automatically by the plugin system
-    public ArchiveServlet(ArchiveService archiveService, RefService refService,
+    public CommentAnalyticServlet(CommentAnalyticService commentAnalyticService, RefService refService,
                           RepositoryService repositoryService, I18nService i18nService,
                           AuthenticationContext authenticationContext) {
-        this.archiveService = archiveService;
+        this.commentAnalyticService = commentAnalyticService;
         this.refService = refService;
         this.repositoryService = repositoryService;
         this.i18nService = i18nService;
@@ -75,11 +75,11 @@ public class ArchiveServlet extends HttpServlet {
 
         // Resolve the request archive format (or default to ZIP if unspecified)
         String extension = trimToNull(req.getParameter("format"));
-        ArchiveFormat format;
+        CommentAnalyticFormat format;
         if (extension == null) {
-            format = ArchiveFormat.ZIP;
+            format = CommentAnalyticFormat.TXT;
         } else {
-            format = ArchiveFormat.forExtension(extension);
+            format = CommentAnalyticFormat.forExtension(extension);
             if (format == null) {
                 resp.sendError(SC_BAD_REQUEST, i18nService.getText("stash.archive.unsupported.format",
                     "Unsupported format: ''{0}''", extension));
@@ -94,28 +94,20 @@ public class ArchiveServlet extends HttpServlet {
         }
         final String resolvedRef = at;
 
-        // Resolve the archive name as specified by query param, or default to <repository>-<ref>.<extension>
-        String filename = trimToNull(req.getParameter("filename"));
-        if (filename == null) {
-            filename = String.format("%s-%s.%s", repository.getSlug(),
-                    resolvedRef.substring(resolvedRef.lastIndexOf("/") + 1), format.getExtension());
-        }
-        final String contentDisposition = String.format("attachment; filename=\"%s\"", filename);
 
         // Stream the output from git-archive to the response
         try {
-            OutputStream wrapper = new ArchiveOutputStream(resp.getOutputStream()) {
+            OutputStream wrapper = new CommentAnalyticOutputStream(resp.getOutputStream()) {
                 @Override
                 protected void onFirstByte() {
                     // Only set the content headers and status once we successfully start streaming the archive. We do
                     // this so we can handle the case where stream() throws an exception that we want to transform into
                     // a specific HTTP code.
-                    resp.setContentType(APPLICATION_OCTET_STREAM);
-                    resp.setHeader("Content-Disposition", contentDisposition);
+                    resp.setContentType(APPLICATION_TEXT_PLAIN);
                     resp.setStatus(SC_OK);
                 }
             };
-            archiveService.stream(repository, format, resolvedRef, wrapper);
+            commentAnalyticService.stream(repository, format, resolvedRef, wrapper);
         } catch (ResourceBusyException e) {
             // the server is currently under too much load to service this request (see ThrottleService for more details)
             resp.sendError(SC_SERVICE_UNAVAILABLE, e.getLocalizedMessage());

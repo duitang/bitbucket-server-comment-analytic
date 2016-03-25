@@ -1,4 +1,6 @@
-<atlassian-plugin key="com.atlassian.stash.plugin.stash-archive" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="com.duitang.util.bitbucket.comment.analytic" 
+                  name="${project.name}" 
+                  plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -11,22 +13,22 @@
         bitbucket-api don't require explicit imports, but GitScm is provided by bitbucket-git-api
         in the bitbucket-git plugin.
     -->
-    <component-import key="git-scm" interface="com.atlassian.bitbucket.scm.git.GitScm" />
+    <!--<component-import key="git-scm" interface="com.atlassian.bitbucket.scm.git.GitScm" />-->
 
     <!--
         Define the ArchiveService as a component so it can be wired into other components. It is also marked with
         public="true" in case other plugins wish to import and use it.
     -->
-    <component key="archive-service" class="com.atlassian.bitbucket.archive.DefaultArchiveService" public="true">
-        <interface>com.atlassian.bitbucket.archive.ArchiveService</interface>
+    <component key="archive-service" class="com.duitang.util.bitbucket.comment.analytic.DefaultCommentAnalyticService" public="true">
+        <interface>com.duitang.util.bitbucket.comment.analytic.CommentAnalyticService</interface>
     </component>
 
     <!--
         Define a servlet to stream the output from the ArchiveService to the client.
     -->
-    <servlet key="archive-servlet" class="com.atlassian.bitbucket.archive.ArchiveServlet">
-        <description>Bitbucket Archive Servlet</description>
-        <url-pattern>/archive/*</url-pattern>
+    <servlet key="archive-servlet" class="com.duitang.util.bitbucket.comment.analytic.CommentAnalyticServlet">
+        <description>Comment Analytic</description>
+        <url-pattern>/comment-analytic/*</url-pattern>
     </servlet>
 
     <!--
@@ -36,8 +38,8 @@
         <resource type="download" name="style.css" location="/static/style.css"/>
         <resource type="download" name="archive.js" location="/static/archive.js"/>
 
-        <resource type="download" name="icon-downloads.svg" location="/static/icon-downloads.svg">
-            <param name="content-type" value="image/svg+xml"/>
+        <resource type="download" name="icon-downloads.svg" location="/static/talk_chat.png">
+            <param name="content-type" value="image/png"/>
         </resource>
 
         <context>bitbucket.layout.repository</context>
@@ -51,11 +53,13 @@
     <!--
         Render the Download archive button immediately after the repository fork action in repository sidebar.
     -->
-    <web-item key="bitbucket-repository-download-archive" name="Download archive" weight="150"
+    <web-item key="bitbucket-generate-comment-analytic" name="Generate comment analytic" 
+              weight="150"
             section="bitbucket.web.repository.header.buttons">
-        <label key="stash.web.repository.download-archive">Download</label>
-        <tooltip key="stash.web.repository.download-archive.tooltip">Download the current branch</tooltip>
-        <link linkId="download-archive-button">/</link>
+        <label key="bitbucket-generate-comment-analytic-label">Comment Analytic</label>
+        <tooltip key="bitbucket-generate-comment-analytic-tooltip">Analytic the current 
+            project</tooltip>
+        <link linkId="comment-analytic-button">/</link>
         <param name="iconClass">aui-icon icon-download-archive</param>
     </web-item>
 

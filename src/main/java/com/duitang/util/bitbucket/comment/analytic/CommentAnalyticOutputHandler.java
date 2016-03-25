@@ -1,4 +1,4 @@
-package com.atlassian.bitbucket.archive;
+package com.duitang.util.bitbucket.comment.analytic;
 
 import com.atlassian.bitbucket.scm.CommandOutputHandler;
 import com.atlassian.utils.process.ProcessException;
@@ -15,9 +15,9 @@ import java.io.OutputStream;
  * supplied {@link OutputStream}. This can be used to stream content from a process to a response, a file or any other
  * output stream.
  */
-public class ArchiveOutputHandler implements CommandOutputHandler<Void> {
+public class CommentAnalyticOutputHandler implements CommandOutputHandler<Void> {
 
-    private static final Logger log = LoggerFactory.getLogger(ArchiveOutputHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(CommentAnalyticOutputHandler.class);
 
     private final int bufferSize;
     private final OutputStream outputStream;
@@ -28,7 +28,7 @@ public class ArchiveOutputHandler implements CommandOutputHandler<Void> {
      * @param bufferSize the size of the buffer used to copy bytes from the process to the output stream
      * @param outputStream the output stream to write to
      */
-    public ArchiveOutputHandler(int bufferSize, OutputStream outputStream) {
+    public CommentAnalyticOutputHandler(int bufferSize, OutputStream outputStream) {
         this.bufferSize = bufferSize;
         this.outputStream = outputStream;
     }

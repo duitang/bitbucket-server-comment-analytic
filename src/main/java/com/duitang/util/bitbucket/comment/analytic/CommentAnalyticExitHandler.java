@@ -1,4 +1,4 @@
-package com.atlassian.bitbucket.archive;
+package com.duitang.util.bitbucket.comment.analytic;
 
 import com.atlassian.bitbucket.NoSuchEntityException;
 import com.atlassian.bitbucket.i18n.I18nService;
@@ -14,13 +14,13 @@ import javax.annotation.Nullable;
  * Custom {@link CommandExitHandler} for that looks for a particular error message returned by {@code git-archive} when
  * a non-existent ref is specified.
  */
-public class ArchiveExitHandler extends DefaultCommandExitHandler {
+public class CommentAnalyticExitHandler extends DefaultCommandExitHandler {
 
     private final I18nService i18nService;
     private final Repository repository;
     private final String ref;
 
-    public ArchiveExitHandler(I18nService i18nService, Repository repository, String ref) {
+    public CommentAnalyticExitHandler(I18nService i18nService, Repository repository, String ref) {
         super(i18nService);
         this.i18nService = i18nService;
         this.repository = repository;
