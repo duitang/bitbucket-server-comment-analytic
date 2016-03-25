@@ -1,10 +1,10 @@
-<atlassian-plugin key="com.duitang.util.bitbucket.comment.analytic" 
-                  name="${project.name}" 
+<atlassian-plugin key="com.duitang.util.bitbucket.comment.analytic"
+                  name="${project.name}"
                   plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="atlassian-data-center-compatible">true</param>
     </plugin-info>
 
@@ -19,14 +19,17 @@
         Define the ArchiveService as a component so it can be wired into other components. It is also marked with
         public="true" in case other plugins wish to import and use it.
     -->
-    <component key="archive-service" class="com.duitang.util.bitbucket.comment.analytic.DefaultCommentAnalyticService" public="true">
+    <component key="archive-service"
+               class="com.duitang.util.bitbucket.comment.analytic.DefaultCommentAnalyticService"
+               public="true">
         <interface>com.duitang.util.bitbucket.comment.analytic.CommentAnalyticService</interface>
     </component>
 
     <!--
         Define a servlet to stream the output from the ArchiveService to the client.
     -->
-    <servlet key="archive-servlet" class="com.duitang.util.bitbucket.comment.analytic.CommentAnalyticServlet">
+    <servlet key="archive-servlet"
+             class="com.duitang.util.bitbucket.comment.analytic.CommentAnalyticServlet">
         <description>Comment Analytic</description>
         <url-pattern>/comment-analytic/*</url-pattern>
     </servlet>
@@ -53,12 +56,13 @@
     <!--
         Render the Download archive button immediately after the repository fork action in repository sidebar.
     -->
-    <web-item key="bitbucket-generate-comment-analytic" name="Generate comment analytic" 
+    <web-item key="bitbucket-generate-comment-analytic" name="Generate comment analytic"
               weight="150"
-            section="bitbucket.web.repository.header.buttons">
+              section="bitbucket.web.repository.header.buttons">
         <label key="bitbucket-generate-comment-analytic-label">Comment Analytic</label>
-        <tooltip key="bitbucket-generate-comment-analytic-tooltip">Analytic the current 
-            project</tooltip>
+        <tooltip key="bitbucket-generate-comment-analytic-tooltip">Analytic the current
+            project
+        </tooltip>
         <link linkId="comment-analytic-button">/</link>
         <param name="iconClass">aui-icon icon-download-archive</param>
     </web-item>

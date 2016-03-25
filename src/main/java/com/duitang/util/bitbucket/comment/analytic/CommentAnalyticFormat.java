@@ -8,28 +8,28 @@ import java.util.Map;
  */
 public enum CommentAnalyticFormat {
 
-    TXT("txt");
+  TXT("txt");
 
-    private final String extension;
+  private final String extension;
 
-    CommentAnalyticFormat(String extension) {
-        this.extension = extension;
+  CommentAnalyticFormat(String extension) {
+    this.extension = extension;
+  }
+
+  public String getExtension() {
+    return extension;
+  }
+
+  private static final Map<String, CommentAnalyticFormat> BY_EXTENSTION = new HashMap<>();
+
+  static {
+    for (CommentAnalyticFormat format : CommentAnalyticFormat.values()) {
+      BY_EXTENSTION.put(format.getExtension(), format);
     }
+  }
 
-    public String getExtension() {
-        return extension;
-    }
-
-    private final static Map<String, CommentAnalyticFormat> BY_EXTENSTION = new HashMap<String, CommentAnalyticFormat>();
-
-    static {
-        for (CommentAnalyticFormat format : CommentAnalyticFormat.values()) {
-            BY_EXTENSTION.put(format.getExtension(), format);
-        }
-    }
-
-    public static CommentAnalyticFormat forExtension(String extension) {
-        return BY_EXTENSTION.get(extension.toLowerCase());
-    }
+  public static CommentAnalyticFormat forExtension(String extension) {
+    return BY_EXTENSTION.get(extension.toLowerCase());
+  }
 
 }
