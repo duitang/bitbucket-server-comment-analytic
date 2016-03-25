@@ -9,12 +9,12 @@
         <version>3.0.11</version>
     </parent>
 
-    <groupId>com.atlassian.bitbucket.server</groupId>
-    <artifactId>bitbucket-archive</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <groupId>com.duitang.util.bitbucket.server</groupId>
+    <artifactId>bitbucket-comment-analytic</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
-    <name>Bitbucket Server Archive Plugin</name>
-    <description>Provides archiving of Git repositories hosted by Bitbucket Server</description>
+    <name>Bitbucket Comments Plugin</name>
+    <description></description>
     <packaging>atlassian-plugin</packaging>
 
     <build>
@@ -87,11 +87,6 @@
             <artifactId>bitbucket-spi</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.bitbucket.server</groupId>
-            <artifactId>bitbucket-git-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- Others (provided by the Bitbucket and the plugin system) -->
         <dependency>
@@ -113,8 +108,10 @@
 
     <properties>
         <amps.version>6.1.0</amps.version>
-        <bitbucket.version>4.0.0-rc12</bitbucket.version>
+        <bitbucket.version>4.0.0-m22</bitbucket.version>
         <jdk.version>8</jdk.version>
+        <project.organization.name>Duitang Inc.</project.organization.name>
+        <project.organization.url>http://www.duitang.com/</project.organization.url>
     </properties>
 
     <scm>
