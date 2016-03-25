@@ -109,6 +109,8 @@ public class DefaultCommentAnalyticService implements CommentAnalyticService {
         .map(x -> String.format("%s: %s\n", x.getKey()
         .getDisplayName(), x.getValue()))
         .collect(Collectors.joining());
+    output += "\n";
+    output += "Powered by 3D(wx @alswl)\n";
     return output;
   }
 
