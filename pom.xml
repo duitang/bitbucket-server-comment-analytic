@@ -110,6 +110,8 @@
         <amps.version>6.1.0</amps.version>
         <bitbucket.version>4.0.0-rc12</bitbucket.version>
         <jdk.version>8</jdk.version>
+        <project.organization.name>Duitang Inc.</project.organization.name>
+        <project.organization.url>http://www.duitang.com/</project.organization.url>
     </properties>
 
     <scm>
