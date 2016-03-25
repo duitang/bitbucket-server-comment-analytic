@@ -3,6 +3,7 @@ package com.duitang.util.bitbucket.comment.analytic;
 import com.atlassian.bitbucket.NoSuchEntityException;
 import com.atlassian.bitbucket.auth.AuthenticationContext;
 import com.atlassian.bitbucket.i18n.I18nService;
+import com.atlassian.bitbucket.pull.PullRequestService;
 import com.atlassian.bitbucket.repository.RefService;
 import com.atlassian.bitbucket.repository.Repository;
 import com.atlassian.bitbucket.repository.RepositoryService;
@@ -38,16 +39,19 @@ public class CommentAnalyticServlet extends HttpServlet {
   private final CommentAnalyticService commentAnalyticService;
   private final RefService refService;
   private final RepositoryService repositoryService;
+  private final PullRequestService pullRequestService;
   private final I18nService i18nService;
   private final AuthenticationContext authenticationContext;
 
   // This constructor's dependencies are wired automatically by the plugin system
   public CommentAnalyticServlet(CommentAnalyticService commentAnalyticService, RefService refService,
-      RepositoryService repositoryService, I18nService i18nService,
+      RepositoryService repositoryService, PullRequestService pullRequestService, I18nService 
+      i18nService,
       AuthenticationContext authenticationContext) {
     this.commentAnalyticService = commentAnalyticService;
     this.refService = refService;
     this.repositoryService = repositoryService;
+    this.pullRequestService = pullRequestService;
     this.i18nService = i18nService;
     this.authenticationContext = authenticationContext;
   }
@@ -118,7 +122,7 @@ public class CommentAnalyticServlet extends HttpServlet {
           resp.setStatus(SC_OK);
         }
       };
-      commentAnalyticService.stream(repository, format, resolvedRef, wrapper);
+      commentAnalyticService.stream(repository, pullRequestService, format, resolvedRef, wrapper);
     } catch (ResourceBusyException e) {
       // the server is currently under too much load to service this request
       // (see ThrottleService for more details)

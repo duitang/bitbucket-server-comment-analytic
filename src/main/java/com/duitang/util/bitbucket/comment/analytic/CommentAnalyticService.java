@@ -1,6 +1,7 @@
 package com.duitang.util.bitbucket.comment.analytic;
 
 import com.atlassian.bitbucket.NoSuchEntityException;
+import com.atlassian.bitbucket.pull.PullRequestService;
 import com.atlassian.bitbucket.repository.Repository;
 import com.atlassian.bitbucket.throttle.ResourceBusyException;
 
@@ -22,7 +23,8 @@ public interface CommentAnalyticService {
    * @throws ResourceBusyException if the server is under too much load to process an archive
    *                               command at the moment
    */
-  void stream(Repository repository, CommentAnalyticFormat format, String ref, OutputStream outputStream)
+  void stream(Repository repository, PullRequestService pullRequestService,
+      CommentAnalyticFormat format, String ref, OutputStream outputStream)
       throws NoSuchEntityException, ResourceBusyException;
 
 }
