@@ -73,4 +73,5 @@ Powered by 3D(wx @alswl).
 
 ## Screenshot
 
-// TODO
+*   ![screenshot 1](https://raw.githubusercontent.com/duitang/bitbucket-server-comment-analytic/master/src/main/resources/screenshot/screenshot_1.png)
+*   ![screenshot 2](https://raw.githubusercontent.com/duitang/bitbucket-server-comment-analytic/master/src/main/resources/screenshot/screenshot_2.png)
