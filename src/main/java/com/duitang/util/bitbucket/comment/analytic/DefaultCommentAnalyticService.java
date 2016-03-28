@@ -20,11 +20,15 @@ import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 public class DefaultCommentAnalyticService implements CommentAnalyticService {
 
@@ -70,21 +74,17 @@ public class DefaultCommentAnalyticService implements CommentAnalyticService {
     return pullRequestActivities;
   }
   
-  protected String generateAnalytic(Repository repository, PullRequestService pullRequestService) {
-//    List<CommentAction> commentActions = Lists.newArrayList();
-//    List<Long> commentIds = Lists.newArrayList();
+  protected List<PullRequestActivity> queryPullRequestsActivityOfComments(
+      Repository repository, PullRequestService pullRequestService) {
     List<PullRequestActivity> pullRequestActivities = Lists.newArrayList();
-    Map<ApplicationUser, Integer> counter = new LinkedHashMap<>();
     PullRequestSearchRequest pullRequestSearchRequest = new PullRequestSearchRequest.Builder()
         .toRepositoryId(repository.getId())
         .withProperties(false)
         .build();
     Page<PullRequest> pullRequests = pullRequestService.search(pullRequestSearchRequest,
         new PageRequestImpl (0, PageRequest.MAX_PAGE_LIMIT - 1));
-//    List<Long> pullRequestIds = Lists.newArrayList();
-    
+
     for (PullRequest pullRequest: pullRequests.getValues()) {  // N + 1
-//      pullRequestIds.add(pullRequest.getId());
       PullRequestActivitySearchRequest pullRequestActivitySearchRequest =
           new PullRequestActivitySearchRequest
               .Builder(pullRequest)
@@ -92,25 +92,44 @@ public class DefaultCommentAnalyticService implements CommentAnalyticService {
               .commentActions(CommentAction.ADDED, CommentAction.REPLIED)
               .withProperties(false)
               .build();
-//      commentIds.addAll(pullRequestActivitySearchRequest.getCommentIds());
       pullRequestActivities.addAll(this.fuckBatchQuery(pullRequestService,
           pullRequestActivitySearchRequest));
     }
+    return pullRequestActivities;
+  }
+
+  protected String generateAnalytic(List<PullRequestActivity> pullRequestActivities,
+      @Nullable Integer latestDaysCount) {
+    Map<ApplicationUser, Integer> counter = new LinkedHashMap<>();
+
+    List<PullRequestActivity> filterdPullRequestActivities;
+    if (latestDaysCount == null) {
+      filterdPullRequestActivities = pullRequestActivities;
+    } else {
+      Calendar calendar = Calendar.getInstance();
+      calendar.add(Calendar.DATE, -1 * latestDaysCount);
+      Date fromDate = calendar.getTime();
+      filterdPullRequestActivities = pullRequestActivities
+          .stream()
+          .filter(x -> x.getCreatedDate().after(fromDate))
+          .collect(Collectors.toList());
+    }
     
-    for (PullRequestActivity pullRequestActivity: pullRequestActivities) {
+    for (PullRequestActivity pullRequestActivity: filterdPullRequestActivities) {
       ApplicationUser user = pullRequestActivity.getUser();
       if (!counter.containsKey(user)) {
         counter.put(user, 1);
       }
       counter.put(user, counter.get(user) + 1);
     }
-    String output = counter.entrySet().stream()
+    String output = latestDaysCount == null ? "## Total\n\n"
+        : String.format("## From %s days to now\n\n", latestDaysCount);
+    output += counter.entrySet().stream()
         .sorted(Comparator.comparing(e -> -e.getValue()))
-        .map(x -> String.format("%s: %s\n", x.getKey()
-        .getDisplayName(), x.getValue()))
+        .map(x -> String.format("*   %s: %s\n", x.getKey().getDisplayName(), x.getValue()))
         .collect(Collectors.joining());
     output += "\n";
-    output += "Powered by 3D(wx @alswl)\n";
+    
     return output;
   }
 
@@ -120,9 +139,24 @@ public class DefaultCommentAnalyticService implements CommentAnalyticService {
     // ticket. This limits the number of concurrent archive operations that can occur simultaneously and conserves
     // precious server resources - see ThrottleService for more details. Note that repository hosting resources
     // also use the "scm-hosting" name, so archive operations will be lumped in the same bucket as a push or clone.
+    String output = "";
+    List<PullRequestActivity> pullRequestActivities = this.queryPullRequestsActivityOfComments(
+        repository, pullRequestService);
     try (Ticket ignored = throttleService.acquireTicket("scm-hosting")) {
       try {
-        outputStream.write(this.generateAnalytic(repository, pullRequestService).getBytes());
+        outputStream.write(String.format("# Comment Analytics for %s\n\n", repository.getName())
+            .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, null).getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 365)
+            .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 30 * 3)
+            .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 30)
+            .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 7)
+            .getBytes());
+        outputStream.write("\n".getBytes());
+        outputStream.write("----\nPowered by 3D(wx @alswl).\n".getBytes());
       } catch (IOException e) {
         e.printStackTrace();
       }
