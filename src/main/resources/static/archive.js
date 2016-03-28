@@ -22,19 +22,12 @@ define('plugin/comment-analytic', [
         var updateCommentAnalyticRef = function (revisionRef) {
             $button.attr("href", AJS.contextPath() + "/plugins/servlet/comment-analytic/projects/" +
                                  encodeURIComponent(pageState.getProject().key) + "/repos/" +
-                                 encodeURIComponent(pageState.getRepository().slug) +
-                                 (revisionRef ? "?at=" + encodeURIComponent(revisionRef) : ""));
+                                 encodeURIComponent(pageState.getRepository().slug)
+            );
         };
 
         // On page load, grab the current ref out of page-state
-        var currentRef = pageState.getRef() ? pageState.getRef().id : null;
-        updateCommentAnalyticRef(currentRef);
-
-        // Also, bind to the branch selector's change event to grab the newly selected ref
-        eve.on('stash.feature.repository.revisionReferenceSelector.revisionRefChanged',
-               function (revisionRef, context) {
-                   updateCommentAnalyticRef(revisionRef.id);
-               });
+        updateCommentAnalyticRef();
     }
 });
 
