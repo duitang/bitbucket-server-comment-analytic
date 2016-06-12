@@ -153,7 +153,11 @@ public class DefaultCommentAnalyticService implements CommentAnalyticService {
             .getBytes());
         outputStream.write(this.generateAnalytic(pullRequestActivities, 30)
             .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 14)
+            .getBytes());
         outputStream.write(this.generateAnalytic(pullRequestActivities, 7)
+            .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 1)
             .getBytes());
         outputStream.write("\n".getBytes());
         outputStream.write("----\nPowered by 3D(wx @alswl).\n".getBytes());
