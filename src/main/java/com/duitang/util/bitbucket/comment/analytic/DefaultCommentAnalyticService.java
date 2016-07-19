@@ -151,6 +151,8 @@ public class DefaultCommentAnalyticService implements CommentAnalyticService {
             .getBytes());
         outputStream.write(this.generateAnalytic(pullRequestActivities, 30 * 3)
             .getBytes());
+        outputStream.write(this.generateAnalytic(pullRequestActivities, 30 * 2)
+            .getBytes());
         outputStream.write(this.generateAnalytic(pullRequestActivities, 30)
             .getBytes());
         outputStream.write(this.generateAnalytic(pullRequestActivities, 14)
